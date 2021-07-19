@@ -1,22 +1,45 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using AForge.Video.FFMPEG;
+using System;
+using System.Drawing;
+using System.IO;
 
-namespace Image_To_Video_Converter
+namespace TimeLapseCreator
 {
-    static class Program
+    class Program
     {
-        /// <summary>
-        /// The main entry point for the application.
-        /// </summary>
-        [STAThread]
-        static void Main()
+        //Enter the Path here
+        const string basePath = @"E:\Pic\NIFTY-22-JUL-2021\";
+
+        static void Main(string[] args)
         {
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new ImageToVideoConverter());
+
+
+            using (var videoWriter = new VideoFileWriter())
+            {
+                //video path + and video format, Image Width , Hieght , Bitdepth
+                videoWriter.Open(basePath + "Output.avi", 1536, 742, 12, VideoCodec.MPEG4, 1000000);
+
+                //Enter the Image format 
+                var image = Directory.GetFiles(basePath, "*.png");
+
+                foreach (var images in image)
+
+
+                {
+
+                    using (Bitmap bitImage = Bitmap.FromFile(images) as Bitmap)
+                    {
+                        videoWriter.WriteVideoFrame(bitImage);
+                    }
+
+                }
+                videoWriter.Close();
+
+
+            }
+            //Console.WriteLine("Process Completed Sucessfully...");
+
+
         }
     }
 }
